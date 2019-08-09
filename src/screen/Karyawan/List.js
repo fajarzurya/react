@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text } from 'native-base';
 import HeaderQ from '../Component/HeaderQ';
 import { DEFINE_API } from '../../config/network/api';
-import {ActivityIndicator} from 'react-native'; //Package untuk Animasi Loading
+import {ActivityIndicator, RefreshControl } from 'react-native'; //Package untuk Animasi Loading
 
 export default class ListKaryawan extends Component {
     constructor(props){
@@ -10,7 +10,8 @@ export default class ListKaryawan extends Component {
         super(props); //variabel props untuk menampung data statis
         const {navigation} = this.props;
         this.state = { //variabel state untuk menampung data dinamis
-          data_karyawan: [] //array kosong
+          data_karyawan: [], //array kosong
+          refresh: false, 
         }
       }
     
@@ -27,10 +28,16 @@ export default class ListKaryawan extends Component {
       async getKaryawanAsync(){
           try{
               let response = await axios.get(DEFINE_API.GET_EMP);
-              return this.setState({data_karyawan: response.data.data}); //Set data dari API ke variabel data karyawan
+              return this.setState({data_karyawan: response.data.data, refresh: false}); //Set data dari API ke variabel data karyawan
           }catch(fail){
               console.log(fail.response);
           }
+      }
+
+      //Fungsi Refresh
+      Refresh(){
+        this.setState({refresh:true}); //animasi refresh muncul
+        this.getKaryawanAsync();
       }
 
     //   LifeCycle React ketika halaman Mount
@@ -74,12 +81,16 @@ export default class ListKaryawan extends Component {
               );
         }
       }
+
       render() {
         return (
           <Container>
               {/* Memanggil komponen HeaderQ */}
             <HeaderQ title="List Employee" nav={this.props.navigation}/>
-            <Content>
+            <Content refreshControl={
+              // Memanggil komponen refreshcontrol
+              <RefreshControl refreshing={this.state.refresh} onRefresh={() => this.Refresh()}/>
+            }>
               <List>
                 {this.renderListK()}
               </List>
