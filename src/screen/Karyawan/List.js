@@ -4,7 +4,7 @@ import HeaderQ from '../Component/HeaderQ';
 import { DEFINE_API } from '../../config/network/api';
 import {ActivityIndicator, RefreshControl, Alert } from 'react-native'; //Package untuk Animasi Loading
 import AsyncStorage from '@react-native-community/async-storage';
-
+import {DeviceEventEmitter} from 'react-native';
 export default class ListKaryawan extends Component {
     constructor(props){
         //React punya 2 variabel 'props' dan 'state'
@@ -14,6 +14,10 @@ export default class ListKaryawan extends Component {
           data_karyawan: [], //array kosong
           refresh: false, 
         }
+        DeviceEventEmitter.addListener('event_update',() => {
+          console.log('Listen Update!!');
+          this.getKaryawanAsync();
+        });
       }
     
     // Get data dari API dengan metode Promise

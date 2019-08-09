@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Container, Content, Item, Input, Icon, View, Button, Text, Label, Picker } from 'native-base';
 import HeaderQ from '../Component/HeaderQ';
 import { DEFINE_API } from '../../config/network/api';
-export default class IconTextboxExample extends Component {
+export default class Add extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -30,7 +30,9 @@ export default class IconTextboxExample extends Component {
                 c_password: this.state.confirm
             };
             let add = await axios.post(DEFINE_API.ADD_EMP,formA);
-            console.log(add);
+            alert('Data Berhasil disimpan');
+            this.props.navigation.navigate('LKaryawan');
+            //console.log(add);
         }catch(fail){
             console.log(fail);
         }
