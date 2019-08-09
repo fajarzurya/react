@@ -4,5 +4,6 @@ export const DEFINE_API = {
     LOGIN: BASE_URL + "login",
     REGISTER: BASE_URL + "register",
     GET_EMP: BASE_URL + "karyawan",
-    PROFILE: BASE_URL + "profile"
+    PROFILE: BASE_URL + "profile",
+    DEL_EMP: BASE_URL + "karyawan/delete",
 }

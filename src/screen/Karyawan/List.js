@@ -1,8 +1,9 @@
 import React, { Fragment, Component } from 'react';
-import { Container, Header, Content, List, ListItem, Left, Body, Right, Thumbnail, Text } from 'native-base';
+import { Container, Content, List, ListItem, Left, Body, Right, Thumbnail, Text, Button } from 'native-base';
 import HeaderQ from '../Component/HeaderQ';
 import { DEFINE_API } from '../../config/network/api';
-import {ActivityIndicator, RefreshControl } from 'react-native'; //Package untuk Animasi Loading
+import {ActivityIndicator, RefreshControl, Alert } from 'react-native'; //Package untuk Animasi Loading
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ListKaryawan extends Component {
     constructor(props){
@@ -35,11 +36,52 @@ export default class ListKaryawan extends Component {
       }
 
       //Fungsi Refresh
-      Refresh(){
+      refresh(){
         this.setState({refresh:true}); //animasi refresh muncul
         this.getKaryawanAsync();
       }
 
+      // Alert Delete
+      alertDel(params){
+        Alert.alert(
+          'Warning!',
+          `Anda yakin menghapus data ini ${params.nama} ?`, //menggabungkan string dan syntax js dengan petik (``)
+          [
+            //{text: 'Tidak', onPress: () => console.log('Ask me later pressed')},
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {text: 'OK', onPress: () => this.deleteData(params.id)},
+          ],
+          {cancelable: false},
+        );
+      }
+
+      async deleteData(params){
+        let formDel = {id: params}; //var kiri (id) sesuai dengan field backend, var kanan sesuai param
+        let token = await AsyncStorage.getItem('login'); //mengambil token 'login' dari Local Storage
+        let head = { //header sebagai perantara ke API
+          headers: { //var kiri (headers) sesuai dengan field backend
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        };
+        console.log(head);
+        try{
+          if(token != null){
+            let hapus = await axios.post(DEFINE_API.DEL_EMP, formDel, head); //eksekusi delete 
+            console.log(hapus);
+            this.getKaryawanAsync();
+          }else{
+            alert('Anda Siapa!!!!!');
+          }
+          
+        }catch(fail){
+          console.log(fail);
+        }
+      }
     //   LifeCycle React ketika halaman Mount
       componentDidMount(){
         // this.getKaryawanPromise();
@@ -69,10 +111,13 @@ export default class ListKaryawan extends Component {
                         </Left>
                         <Body>
                           <Text>{a.nama}</Text>
-                          <Text note>{a.email}}</Text>
+                          <Text note>{a.email}</Text>
+                          <Text note>{a.jabatan}</Text>
                         </Body>
                         <Right>
-                          <Text note>{a.jabatan}</Text>
+                          <Button bordered danger onPress={() => this.alertDel(a)}>
+                            <Text>Delete</Text>
+                          </Button>
                         </Right>
                       </ListItem>
                     );
@@ -89,7 +134,7 @@ export default class ListKaryawan extends Component {
             <HeaderQ title="List Employee" nav={this.props.navigation}/>
             <Content refreshControl={
               // Memanggil komponen refreshcontrol
-              <RefreshControl refreshing={this.state.refresh} onRefresh={() => this.Refresh()}/>
+              <RefreshControl refreshing={this.state.refresh} onRefresh={() => this.refresh()}/>
             }>
               <List>
                 {this.renderListK()}
