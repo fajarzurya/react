@@ -31,7 +31,7 @@ export default class Karyawan extends Component {
             </Col>
             <Col>
               <Card>
-                <CardItem button onPress={() => alert("This is Card Footer")}>
+                <CardItem button onPress={() => this.props.page.navigate('AKaryawan')}>
                   <Text>Add Employee</Text>
                 </CardItem>
               </Card>

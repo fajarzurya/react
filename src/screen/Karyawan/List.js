@@ -31,7 +31,7 @@ export default class ListKaryawan extends Component {
               let response = await axios.get(DEFINE_API.GET_EMP);
               return this.setState({data_karyawan: response.data.data, refresh: false}); //Set data dari API ke variabel data karyawan
           }catch(fail){
-              console.log(fail.response);
+              console.log(fail);
           }
       }
 
@@ -62,20 +62,21 @@ export default class ListKaryawan extends Component {
       async deleteData(params){
         let formDel = {id: params}; //var kiri (id) sesuai dengan field backend, var kanan sesuai param
         let token = await AsyncStorage.getItem('login'); //mengambil token 'login' dari Local Storage
-        let head = { //header sebagai perantara ke API
-          headers: { //var kiri (headers) sesuai dengan field backend
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        };
-        console.log(head);
+        // let head = { //header sebagai perantara ke API
+        //   headers: { //var kiri (headers) sesuai dengan field backend
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${token}`
+        //   }
+        // };
         try{
           if(token != null){
-            let hapus = await axios.post(DEFINE_API.DEL_EMP, formDel, head); //eksekusi delete 
+            //let hapus = await axios.post(DEFINE_API.DEL_EMP, formDel, head); //eksekusi delete 
+            let hapus = await axios.post(DEFINE_API.DEL_EMP, formDel);
             console.log(hapus);
             this.getKaryawanAsync();
           }else{
-            alert('Anda Siapa!!!!!');
+            alert('Anda Belum Login');
+            setTimeout(() => {this.props.navigation.navigate('Login')},500);
           }
           
         }catch(fail){

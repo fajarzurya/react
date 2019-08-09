@@ -6,4 +6,6 @@ export const DEFINE_API = {
     GET_EMP: BASE_URL + "karyawan",
     PROFILE: BASE_URL + "profile",
     DEL_EMP: BASE_URL + "karyawan/delete",
+    GET_JBT: BASE_URL + "jabatan",
+    ADD_EMP: BASE_URL + "karyawan/add",
 }
